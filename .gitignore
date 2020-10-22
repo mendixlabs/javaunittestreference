@@ -1,0 +1,7 @@
+.svn
+.gradle
+deployment
+build
+*.bak
+.mendix-cache
+

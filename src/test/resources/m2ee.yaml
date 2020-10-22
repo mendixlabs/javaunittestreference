@@ -1,0 +1,40 @@
+m2ee:
+  app_name: JavaUnitTestReference
+  app_base: /srv/app/
+  model_upload_path: /app
+  admin_port: 9000
+  admin_pass: verysecret
+  runtime_port: 8080
+  # logfile: /app/mxid3.log
+  pidfile: /srv/app/datahub.pid
+  preserve_environment: true
+  runtime_listen_addresses: 0.0.0.0
+
+mxnode:
+  mxjar_repo: /opt/
+
+logging:
+- name: FileSubscriber
+  type: file
+  autosubscribe: INFO
+  filename: /app/javaunittestreference.log
+  max_size: 10485760 # bytes
+  max_rotation: 9
+-
+  name: SysLogSubscriber
+  autosubscribe: INFO
+  type: console
+
+mxruntime:
+  ApplicationRootUrl: http://localhost:8080
+
+  DatabaseType: PostgreSQL
+  DatabaseHost: database
+  DatabaseName: javaunittestreference
+  DatabaseUserName: postgres
+  DatabasePassword: javaunittestreference
+
+  MicroflowConstants:
+    MyFirstModule.MyFirstConstant: ConstantValue
+
+  ScheduledEventExecution: ALL
