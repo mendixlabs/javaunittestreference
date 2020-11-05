@@ -4,4 +4,4 @@ deployment
 build
 *.bak
 .mendix-cache
-
+*.lock

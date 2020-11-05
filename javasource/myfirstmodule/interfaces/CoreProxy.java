@@ -46,21 +46,11 @@ public interface CoreProxy {
     }
 
     /**
-     * Addition to the Core API. In a running Mendix app this will return true. It will return false
-     * when Core has not been initialized, for instance when running in the context of a unit test.
-     *
-     * @return true if Core has been initialized (http() == null), false otherwise.
-     */
-    public default boolean isRunningApp() {
-        return Core.http() != null;
-    }
-
-    /**
      * Purpose is to call this from test code in order to provide an ICore implementation that reads
      * constants from test resources.
      *
-     * @param core You can use ICoreDummyImpl here.
-     * @param http can be null (if not, then isRunningApp() will return true!)
+     * @param core You can use a mocked ICore here.
+     * @param http can be null
      * @param integration can be null
      * @param dataStorage can be null
      * @param metrics can be null
