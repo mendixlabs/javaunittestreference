@@ -16,14 +16,7 @@ public class Microflows
 	// These are the microflows for the System module
 	public static void showHomePage(IContext context)
 	{
-		try
-		{
-			Map<java.lang.String, Object> params = new HashMap<java.lang.String, Object>();
-			Core.execute(context, "System.ShowHomePage", params);
-		}
-		catch (CoreException e)
-		{
-			throw new MendixRuntimeException(e);
-		}
+		Map<java.lang.String, Object> params = new HashMap<>();
+		Core.microflowCall("System.ShowHomePage").withParams(params).execute(context);
 	}
 }

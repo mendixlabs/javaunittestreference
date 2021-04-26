@@ -5,3 +5,4 @@ build
 *.bak
 .mendix-cache
 *.lock
+GPUCache

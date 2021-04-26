@@ -16,14 +16,7 @@ public class Microflows
 	// These are the microflows for the MyFirstModule module
 	public static boolean aSU_AfterStartup(IContext context)
 	{
-		try
-		{
-			Map<java.lang.String, Object> params = new HashMap<java.lang.String, Object>();
-			return (java.lang.Boolean)Core.execute(context, "MyFirstModule.ASU_AfterStartup", params);
-		}
-		catch (CoreException e)
-		{
-			throw new MendixRuntimeException(e);
-		}
+		Map<java.lang.String, Object> params = new HashMap<>();
+		return (java.lang.Boolean) Core.microflowCall("MyFirstModule.ASU_AfterStartup").withParams(params).execute(context);
 	}
 }

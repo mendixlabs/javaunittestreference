@@ -1,7 +1,7 @@
 package myfirstmodule.actions;
 
 import com.mendix.logging.ILogNode;
-import myfirstmodule.MendixCompatibleTest;
+import myfirstmodule.MendixUnitTestBase;
 import myfirstmodule.implementation.CoreProxyImpl;
 import myfirstmodule.interfaces.CoreProxy;
 import static myfirstmodule.proxies.constants.Constants.getMyFirstConstant;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
  *
  * @author reinout
  */
-public class MyFirstJavaActionTest extends MendixCompatibleTest {
+public class MyFirstJavaActionTest extends MendixUnitTestBase {
 
     private final CoreProxy core = CoreProxyImpl.getInstance();
 

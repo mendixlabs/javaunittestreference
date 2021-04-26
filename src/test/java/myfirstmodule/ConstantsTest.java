@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author reinout
  */
-public class ConstantsTest extends MendixCompatibleTest {
+public class ConstantsTest extends MendixUnitTestBase {
 
 	@Test
 	public void testGetConstantValue() {
