@@ -11,6 +11,7 @@ import com.mendix.logging.ILogNode;
 import com.mendix.metrics.Metrics;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -43,6 +44,14 @@ public interface CoreProxy {
 
     public default List<IMendixObject> commit(IContext ic, List<IMendixObject> limo) {
         return Core.commit(ic, limo);
+    }
+
+    public default InputStream getFileDocumentContent(IContext ic, IMendixObject imo) {
+        return Core.getFileDocumentContent(ic, imo);
+    }
+
+    public default void storeFileDocumentContent(IContext ic, IMendixObject imo, String string, InputStream in) {
+        Core.storeFileDocumentContent(ic, imo, string, in);
     }
 
     /**
