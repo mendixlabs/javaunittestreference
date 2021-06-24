@@ -2,6 +2,7 @@ package myfirstmodule.interfaces;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
+import com.mendix.core.actionmanagement.MicroflowCallBuilder;
 import com.mendix.core.internal.ICore;
 import com.mendix.datastorage.DataStorage;
 import com.mendix.datastorage.XPathQuery;
@@ -54,9 +55,12 @@ public interface CoreProxy {
         Core.storeFileDocumentContent(ic, imo, string, in);
     }
 
+    public default MicroflowCallBuilder microflowCall(String microflowName) {
+        return Core.microflowCall(microflowName);
+    }
     /**
-     * Purpose is to call this from test code in order to provide an ICore implementation that reads
-     * constants from test resources.
+     * Purpose is to call this from MendixUnitTestBase in order to provide an ICore implementation
+     * that provides mocked functionality.
      *
      * @param core You can use a mocked ICore here.
      * @param http can be null
