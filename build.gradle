@@ -85,6 +85,11 @@ jacocoTestReport {
         csv.enabled true
         csv.destination file("${buildDir}/jacocoCsv")
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: ['**/proxies/**', '**/system/**'])
+        }))
+    }
 }
 
 task copyToUserlib( type: Copy ) {
