@@ -82,8 +82,8 @@ test {
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
-        // Use XML output as part of a CI pipeline
-        xml.enabled true
+        csv.enabled true
+        csv.destination file("${buildDir}/jacocoCsv")
     }
 }
 

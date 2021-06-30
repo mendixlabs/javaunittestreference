@@ -10,6 +10,7 @@ image: gradle:jdk11
 # isolated from any previous builds.
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacocoCsv'
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -27,7 +28,9 @@ build:
 
 test:
   stage: test
-  script: gradle check
+  script:
+    - gradle check
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
