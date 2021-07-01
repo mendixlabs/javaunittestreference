@@ -1,3 +1,4 @@
+[![pipeline status](https://gitlab.rnd.mendix.com/platformcore/javaunittestreference/badges/master/pipeline.svg)](https://gitlab.rnd.mendix.com/platformcore/javaunittestreference/-/commits/master)
 [![coverage report](https://gitlab.rnd.mendix.com/platformcore/javaunittestreference/badges/master/coverage.svg)](https://gitlab.rnd.mendix.com/platformcore/javaunittestreference/-/commits/master) 
 
 # JavaUnitTestReference
