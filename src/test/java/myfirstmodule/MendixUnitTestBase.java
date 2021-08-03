@@ -31,7 +31,10 @@ import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Contains logic that deals with reading "constants" from resources/m2ee.yaml
+ * Contains logic that deals with reading "constants" from resources/m2ee.yaml as well as
+ * convenience methods for mocking Core functionality.
+ *
+ * Please extend this class when you implement new unit tests.
  *
  * @author reinout
  */
@@ -50,6 +53,13 @@ public abstract class MendixUnitTestBase {
 		return RESOURCES.resolve(resourceName).toFile();
 	}
 
+    /**
+     * Convenience method to get a mocked log node. This method makes sure to always return the same
+     * log node mock object for the log node name.
+     *
+     * @param name The name of the log node
+     * @return A mocked ILogNode for the given log node name
+     */
 	protected static ILogNode mockLogNode(String name) {
 		if (LOG_NODES.containsKey(name)) {
 			return LOG_NODES.get(name);
@@ -58,7 +68,7 @@ public abstract class MendixUnitTestBase {
 		var logNode = mock(ILogNode.class);
 		LOG_NODES.put(name, logNode);
 
-		return logNode;
+        return logNode;
 	}
 
     /**
@@ -103,6 +113,28 @@ public abstract class MendixUnitTestBase {
         return _params;
     }
 
+    /**
+     * Allow using the constructor of Mendix-generated proxy classes
+     */
+    protected static void mockInstantiatingProxyClasses() {
+        when(ICORE.instantiate(any(), anyString()))
+            .thenAnswer(invocation -> {
+                var mockIMO = mock(IMendixObject.class);
+                var objectType = invocation.getArgument(1, String.class);
+                when(mockIMO.getType())
+                    .thenReturn(objectType);
+                return mockIMO;
+            });
+
+        when(ICORE.isSubClassOf(anyString(), anyString()))
+            .thenAnswer(invocation -> {
+                var left = invocation.getArgument(0, String.class);
+                var right = invocation.getArgument(1, String.class);
+
+                return left.equals(right);
+            });
+    }
+
 	static {
 
 		final Map<?, ?> m2ee;
@@ -131,22 +163,8 @@ public abstract class MendixUnitTestBase {
 			.thenAnswer(invocation -> {
 				return mockLogNode(invocation.getArgument(0, String.class));
 			});
-		when(ICORE.instantiate(any(), anyString()))
-			.thenAnswer(invocation -> {
-			var mockIMO = mock(IMendixObject.class);
-			var objectType = invocation.getArgument(1, String.class);
-				when(mockIMO.getType())
-					.thenReturn(objectType);
-				return mockIMO;
-			});
 
-		when(ICORE.isSubClassOf(anyString(), anyString()))
-			.thenAnswer(invocation -> {
-			var left = invocation.getArgument(0, String.class);
-			var right = invocation.getArgument(1, String.class);
-
-				return left.equals(right);
-			});
+        mockInstantiatingProxyClasses();
 	}
 
 	@BeforeAll
