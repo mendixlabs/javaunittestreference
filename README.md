@@ -9,3 +9,7 @@ Purpose of this Gitlab repository is to show how to use Gradle to execute unit t
 # Example usage
 
 `gradle test` will execute the example unit test suite.
+
+# Disclaimer
+
+This component is not officially supported by Mendix.
