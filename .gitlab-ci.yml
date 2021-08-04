@@ -12,6 +12,11 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/jacocoCsv'
 
+stages:
+  - build
+  - test
+  - linting
+
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - gradle prepareDeps
@@ -40,4 +45,12 @@ test:
   artifacts:
         reports:
             junit: build/test-results/test/TEST-*.xml
+
+snyk:
+  stage: linting
+  variables:
+    SNYK_TOKEN: $SNYK_TOKEN
+  image: nexus-docker-group.rnd.mendix.com/pipelinecomponents/snyk:latest
+  script:
+    - snyk test
 
