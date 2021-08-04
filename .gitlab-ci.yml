@@ -50,7 +50,8 @@ snyk:
   stage: linting
   variables:
     SNYK_TOKEN: $SNYK_TOKEN
-  image: nexus-docker-group.rnd.mendix.com/pipelinecomponents/snyk:latest
+  image: nexus-docker-group.rnd.mendix.com/gradle:6-jdk11
   script:
-    - snyk test
+    - gradle snyk-test
+  allow_failure: true 
 
