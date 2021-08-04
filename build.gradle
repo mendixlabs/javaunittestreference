@@ -18,6 +18,7 @@
 plugins {
     id 'java-library'
     id 'jacoco'
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 sourceCompatibility = '11'
@@ -117,6 +118,10 @@ task prepareDeps {
 
 clean {
     delete "$projectDir/userlib"
+}
+
+snyk {
+    arguments = "--package-manager=gradle --file=build.gradle"
 }
 
 //compileJava.dependsOn tasks.prepareDeps
