@@ -169,7 +169,7 @@ public abstract class MendixUnitTestBase {
 
 	@BeforeAll
 	protected static void initializeCoreWithMockICore() {
-		CoreProxy.initialize(ICORE, null, null, null, null);
+        CoreProxy.initialize(ICORE, null, null, null, null, null);
 	}
 
 	protected static String readTestResource(String resourceName) throws IOException {

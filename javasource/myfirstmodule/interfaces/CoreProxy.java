@@ -3,6 +3,7 @@ package myfirstmodule.interfaces;
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
 import com.mendix.core.actionmanagement.MicroflowCallBuilder;
+import com.mendix.core.conf.LicenseInfo;
 import com.mendix.core.internal.ICore;
 import com.mendix.datastorage.DataStorage;
 import com.mendix.datastorage.XPathQuery;
@@ -59,16 +60,17 @@ public interface CoreProxy {
         return Core.microflowCall(microflowName);
     }
     /**
-     * Purpose is to call this from MendixUnitTestBase in order to provide an ICore implementation
-     * that provides mocked functionality.
+     * Purpose is to call this from test code in order to provide an ICore implementation that
+     * provides mocked functionality.
      *
      * @param core You can use a mocked ICore here.
      * @param http can be null
      * @param integration can be null
      * @param dataStorage can be null
      * @param metrics can be null
+     * @param licenseInfo can be null
      */
-    public static void initialize(ICore core, Http http, Integration integration, DataStorage dataStorage, Metrics metrics) {
-        Core.initialize(core, http, integration, dataStorage, metrics);
+    public static void initialize(ICore core, Http http, Integration integration, DataStorage dataStorage, Metrics metrics, LicenseInfo licenseInfo) {
+        Core.initialize(core, http, integration, dataStorage, metrics, licenseInfo);
     }
 }
