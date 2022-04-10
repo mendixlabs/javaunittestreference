@@ -44,7 +44,7 @@ public abstract class MendixUnitTestBase {
 	protected static final ICore ICORE;
 	protected static final Configuration CONFIGURATION;
 	protected static final Map<String, Object> MF_CONSTANTS;
-	protected static final String MF_RUNTIME_ROOT_URL;
+	protected static final String RUNTIME_ROOT_URL;
 	protected static final Path RESOURCES = Paths.get("src", "test", "resources");
 
 	private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
@@ -150,7 +150,7 @@ public abstract class MendixUnitTestBase {
 		@SuppressWarnings("unchecked")
 		var constants = (Map<String, Object>) mxruntime.get("MicroflowConstants");
 		MF_CONSTANTS = constants;
-		MF_RUNTIME_ROOT_URL = (String) mxruntime.get("ApplicationRootUrl");
+		RUNTIME_ROOT_URL = (String) mxruntime.get("ApplicationRootUrl");
 
 		ICORE = mock(ICore.class);
 		CONFIGURATION = mock(Configuration.class);
@@ -163,7 +163,7 @@ public abstract class MendixUnitTestBase {
 					return MF_CONSTANTS.get(constantKey);
 				});
 		when(CONFIGURATION.getApplicationRootUrl())
-				.thenReturn(MF_RUNTIME_ROOT_URL);
+				.thenReturn(RUNTIME_ROOT_URL);
 
 		when(ICORE.getLogger(anyString()))
 			.thenAnswer(invocation -> {
