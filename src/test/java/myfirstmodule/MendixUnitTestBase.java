@@ -44,6 +44,7 @@ public abstract class MendixUnitTestBase {
 	protected static final ICore ICORE;
 	protected static final Configuration CONFIGURATION;
 	protected static final Map<String, Object> MF_CONSTANTS;
+	protected static final String RUNTIME_ROOT_URL;
 	protected static final Path RESOURCES = Paths.get("src", "test", "resources");
 
 	private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
@@ -145,8 +146,11 @@ public abstract class MendixUnitTestBase {
 		}
 
 		@SuppressWarnings("unchecked")
-		var mxruntime = (Map<String, Map<String, Object>>) m2ee.get("mxruntime");
-		MF_CONSTANTS = mxruntime.get("MicroflowConstants");
+		var mxruntime = (Map<String, Object>) m2ee.get("mxruntime");
+		@SuppressWarnings("unchecked")
+		var constants = (Map<String, Object>) mxruntime.get("MicroflowConstants");
+		MF_CONSTANTS = constants;
+		RUNTIME_ROOT_URL = (String) mxruntime.get("ApplicationRootUrl");
 
 		ICORE = mock(ICore.class);
 		CONFIGURATION = mock(Configuration.class);
@@ -154,10 +158,12 @@ public abstract class MendixUnitTestBase {
 		when(ICORE.getConfiguration())
 			.thenReturn(CONFIGURATION);
 		when(CONFIGURATION.getConstantValue(anyString()))
-			.thenAnswer(invocation -> {
-				var constantKey = invocation.getArgument(0, String.class);
-				return MF_CONSTANTS.get(constantKey);
-			});
+				.thenAnswer(invocation -> {
+					var constantKey = invocation.getArgument(0, String.class);
+					return MF_CONSTANTS.get(constantKey);
+				});
+		when(CONFIGURATION.getApplicationRootUrl())
+				.thenReturn(RUNTIME_ROOT_URL);
 
 		when(ICORE.getLogger(anyString()))
 			.thenAnswer(invocation -> {
