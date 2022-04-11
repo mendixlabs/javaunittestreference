@@ -6,3 +6,9 @@ build
 .mendix-cache
 *.lock
 GPUCache
+build
+
+
+project-settings.user.json
+
+snyk
