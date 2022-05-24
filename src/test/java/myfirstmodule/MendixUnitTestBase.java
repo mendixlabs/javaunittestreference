@@ -5,8 +5,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mendix.core.actionmanagement.MicroflowCallBuilder;
 import com.mendix.core.conf.Configuration;
 import com.mendix.core.internal.ICore;
+import com.mendix.datastorage.XPathQuery;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.MendixRuntimeException;
+import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -72,6 +75,47 @@ public abstract class MendixUnitTestBase {
 
         return logNode;
 	}
+
+    /**
+     * Use when Mendix under the hood uses an IMendixIdentifier to load an entity. This convenience
+     * method sets the entity type on the IMendixIdentifier. Useful when you are mocking a retrieval
+     * over association.
+     *
+     * @param objectType The object type
+     * @return an IMendixIdentifier of the given object type
+     */
+    protected static IMendixIdentifier mockIMendixIdentifier(String objectType) {
+        final IMendixIdentifier imi = mock(IMendixIdentifier.class);
+        when(imi.getObjectType())
+            .thenReturn(objectType);
+        return imi;
+    }
+
+    /**
+     * Use this convenience method to mock an IMendixObject that will return its type
+     * when getType() is invoked on it.
+     *
+     * @param objectType the object type to return (e.g. system.proxies.User.entityName)
+     * @return the mocked IMendixObject
+     */
+    protected static IMendixObject mockIMendixObject(String objectType) {
+        var mockIMO = mock(IMendixObject.class);
+        lenient().when(mockIMO.getType())
+            .thenReturn(objectType);
+        return mockIMO;
+    }
+
+    /**
+     * Use this convenience method to mock an XPathQuery object that will be returned when
+     * CoreProxy.createXPathQuery() is invoked with any String parameter.
+     * @return the mocked XPathQuery object
+     */
+    protected static XPathQuery mockXPathQuery() {
+        var mockXPathQuery = mock(XPathQuery.class);
+        when(ICORE.createXPathQuery(anyString()))
+            .thenReturn(mockXPathQuery);
+        return mockXPathQuery;
+    }
 
     /**
      * You will need to call mockMicroflowCallWithParams as well with the resulting
