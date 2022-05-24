@@ -12,6 +12,7 @@ import com.mendix.integration.Integration;
 import com.mendix.logging.ILogNode;
 import com.mendix.metrics.Metrics;
 import com.mendix.systemwideinterfaces.core.IContext;
+import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import java.io.InputStream;
 import java.util.List;
@@ -59,6 +60,11 @@ public interface CoreProxy {
     public default MicroflowCallBuilder microflowCall(String microflowName) {
         return Core.microflowCall(microflowName);
     }
+
+    public default IMendixObject retrieveId(IContext ic, IMendixIdentifier imi) throws CoreException {
+        return Core.retrieveId(ic, imi);
+    }
+
     /**
      * Purpose is to call this from test code in order to provide an ICore implementation that
      * provides mocked functionality.

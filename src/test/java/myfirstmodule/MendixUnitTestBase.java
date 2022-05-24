@@ -46,6 +46,7 @@ public abstract class MendixUnitTestBase {
 	protected static final Map<String, Object> MF_CONSTANTS;
 	protected static final String RUNTIME_ROOT_URL;
 	protected static final Path RESOURCES = Paths.get("src", "test", "resources");
+    protected static final Path PROJECT_RESOURCES = Paths.get(System.getProperty("user.dir"), "resources");
 
 	private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
 	private static final Map<String, ILogNode> LOG_NODES = new HashMap<>();
@@ -162,6 +163,9 @@ public abstract class MendixUnitTestBase {
 					var constantKey = invocation.getArgument(0, String.class);
 					return MF_CONSTANTS.get(constantKey);
 				});
+        when(CONFIGURATION.getResourcesPath())
+            .thenReturn(PROJECT_RESOURCES.toFile());
+
 		when(CONFIGURATION.getApplicationRootUrl())
 				.thenReturn(RUNTIME_ROOT_URL);
 
@@ -184,7 +188,7 @@ public abstract class MendixUnitTestBase {
 		assertNotNull(resource);
 
 		try (var bufferedReader = new BufferedReader(new FileReader(resource))) {
-			resultBuilder.append(bufferedReader.lines().collect(Collectors.joining()));
+			resultBuilder.append(bufferedReader.lines().collect(Collectors.joining("\n")));
 		} catch (FileNotFoundException ex) {
 			fail(ex.getMessage());
 		}
