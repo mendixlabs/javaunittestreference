@@ -61,8 +61,8 @@ public interface CoreProxy {
         return Core.microflowCall(microflowName);
     }
 
-    public default IMendixObject retrieveId(IContext ic, IMendixIdentifier imi) throws CoreException {
-        return Core.retrieveId(ic, imi);
+    public default IMendixObject retrieveId(IContext context, IMendixIdentifier id) throws CoreException {
+        return Core.retrieveId(context, id);
     }
 
     /**
