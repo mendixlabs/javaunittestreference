@@ -2,12 +2,15 @@ package myfirstmodule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.mendix.core.Core;
+import com.mendix.core.CoreException;
 import com.mendix.core.actionmanagement.MicroflowCallBuilder;
 import com.mendix.core.conf.Configuration;
 import com.mendix.core.internal.ICore;
 import com.mendix.datastorage.XPathQuery;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.MendixRuntimeException;
+import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import java.io.BufferedReader;
@@ -19,8 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import myfirstmodule.interfaces.CoreProxy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,8 +47,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public abstract class MendixUnitTestBase {
 
+    protected static Configuration CONFIGURATION;
 	protected static final ICore ICORE;
-	protected static final Configuration CONFIGURATION;
+    protected static final IContext CONTEXT;
 	protected static final Map<String, Object> MF_CONSTANTS;
 	protected static final String RUNTIME_ROOT_URL;
 	protected static final Path RESOURCES = Paths.get("src", "test", "resources");
@@ -164,13 +168,9 @@ public abstract class MendixUnitTestBase {
      */
     protected static void mockInstantiatingProxyClasses() {
         when(ICORE.instantiate(any(), anyString()))
-            .thenAnswer(invocation -> {
-                var mockIMO = mock(IMendixObject.class);
-                var objectType = invocation.getArgument(1, String.class);
-                when(mockIMO.getType())
-                    .thenReturn(objectType);
-                return mockIMO;
-            });
+            .thenAnswer(invocation -> mockIMendixObject(
+            invocation.getArgument(1, String.class)
+        ));
 
         when(ICORE.isSubClassOf(anyString(), anyString()))
             .thenAnswer(invocation -> {
@@ -179,6 +179,43 @@ public abstract class MendixUnitTestBase {
 
                 return left.equals(right);
             });
+    }
+
+    protected static void mockGetLogger() {
+        when(ICORE.getLogger(anyString()))
+            .thenAnswer(invocation -> {
+                return mockLogNode(invocation.getArgument(0, String.class));
+            });
+    }
+
+    protected static void mockRetrieveId() {
+        try {
+            when(ICORE.retrieveId(any(IContext.class), any(IMendixIdentifier.class)))
+                .thenAnswer(invocation -> {
+                    var objType = Optional.ofNullable(invocation.getArgument(1, IMendixIdentifier.class)
+                        .getObjectType());
+                    return mockIMendixObject(objType.orElseThrow(() -> new CoreException("No object type in IMendixIdentifier")));
+                });
+        } catch (CoreException ex) {
+            fail(ex);
+        }
+    }
+
+    protected static void mockConfiguration() {
+        CONFIGURATION = mock(Configuration.class);
+        when(CONFIGURATION.getConstantValue(anyString()))
+            .thenAnswer(invocation -> {
+                var constantKey = invocation.getArgument(0, String.class);
+                return MF_CONSTANTS.get(constantKey);
+            });
+        when(CONFIGURATION.getResourcesPath())
+            .thenReturn(PROJECT_RESOURCES.toFile());
+
+        when(CONFIGURATION.getApplicationRootUrl())
+            .thenReturn(RUNTIME_ROOT_URL);
+
+        when(ICORE.getConfiguration())
+            .thenReturn(CONFIGURATION);
     }
 
 	static {
@@ -197,33 +234,19 @@ public abstract class MendixUnitTestBase {
 		MF_CONSTANTS = constants;
 		RUNTIME_ROOT_URL = (String) mxruntime.get("ApplicationRootUrl");
 
-		ICORE = mock(ICore.class);
-		CONFIGURATION = mock(Configuration.class);
+        CONTEXT = mock(IContext.class);
+        ICORE = mock(ICore.class);
 
-		when(ICORE.getConfiguration())
-			.thenReturn(CONFIGURATION);
-		when(CONFIGURATION.getConstantValue(anyString()))
-				.thenAnswer(invocation -> {
-					var constantKey = invocation.getArgument(0, String.class);
-					return MF_CONSTANTS.get(constantKey);
-				});
-        when(CONFIGURATION.getResourcesPath())
-            .thenReturn(PROJECT_RESOURCES.toFile());
-
-		when(CONFIGURATION.getApplicationRootUrl())
-				.thenReturn(RUNTIME_ROOT_URL);
-
-		when(ICORE.getLogger(anyString()))
-			.thenAnswer(invocation -> {
-				return mockLogNode(invocation.getArgument(0, String.class));
-			});
-
+        mockConfiguration();
+        mockGetLogger();
+        mockRetrieveId();
+        // Added to allow using the constructor of proxy classes, for example odata4_parsing.proxies.Association(IContext context)
         mockInstantiatingProxyClasses();
 	}
 
 	@BeforeAll
 	protected static void initializeCoreWithMockICore() {
-        CoreProxy.initialize(ICORE, null, null, null, null, null);
+        Core.initialize(ICORE, null, null, null, null, null);
 	}
 
 	protected static String readTestResource(String resourceName) throws IOException {
@@ -232,7 +255,7 @@ public abstract class MendixUnitTestBase {
 		assertNotNull(resource);
 
 		try (var bufferedReader = new BufferedReader(new FileReader(resource))) {
-			resultBuilder.append(bufferedReader.lines().collect(Collectors.joining("\n")));
+			resultBuilder.append(bufferedReader.lines().collect(Collectors.joining(System.lineSeparator())));
 		} catch (FileNotFoundException ex) {
 			fail(ex.getMessage());
 		}

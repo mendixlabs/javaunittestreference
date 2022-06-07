@@ -9,11 +9,10 @@
 
 package myfirstmodule.actions;
 
+import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
-import myfirstmodule.implementation.CoreProxyImpl;
-import myfirstmodule.interfaces.CoreProxy;
 import static myfirstmodule.proxies.constants.Constants.getMyFirstConstant;
 
 public class MyFirstJavaAction extends CustomJavaAction<java.lang.Void>
@@ -43,11 +42,10 @@ public class MyFirstJavaAction extends CustomJavaAction<java.lang.Void>
 	}
 
 	// BEGIN EXTRA CODE
-    private static final CoreProxy core = CoreProxyImpl.getInstance();
-    private static final ILogNode LOG = core.getLogger(getMyFirstConstant());
+    private static final ILogNode LOG = Core.getLogger(getMyFirstConstant());
 
     public static void logDemo() {
-        LOG.info("CoreProxy usage demonstration");
+        LOG.info("MendixUnitTestBase usage demonstration");
     }
 	// END EXTRA CODE
 }
