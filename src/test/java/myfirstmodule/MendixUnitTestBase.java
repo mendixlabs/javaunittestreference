@@ -31,11 +31,19 @@ import java.util.stream.Collectors;
 
 import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RunnableScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -306,4 +314,28 @@ public abstract class MendixUnitTestBase {
         return mockImetaObject;
     }
 
+    protected static <R> RunnableScheduledFuture<?> mockSchedule(MicroflowCallBuilder mockMfCall, String actionName) throws InterruptedException, ExecutionException, CoreException, TimeoutException {
+        final var mockFuture = mock(RunnableScheduledFuture.class);
+        lenient().when(mockFuture.get())
+                .thenAnswer(invocation -> mockMfCall.execute(CONTEXT));
+        lenient().when(mockFuture.get(anyLong(), any(TimeUnit.class)))
+                .thenAnswer(invocation -> {
+                    final var start = Instant.now();
+                    final var timeUnit = (TimeUnit) invocation.getArgument(1);
+                    final var timeout = (long) invocation.getArgument(0);
+                    final var result = mockMfCall.execute(CONTEXT);
+                    if ( Instant.now().isAfter(start.plus(timeout, timeUnit.toChronoUnit())) ) {
+                        throw new TimeoutException();
+}
+                    return result;
+                });
+        when(ICORE.schedule(eq(actionName), any(Date.class)))
+                .thenAnswer(invocation -> { 
+                    var date = (Date) invocation.getArgument(1);
+                    var delay = Instant.now().until(date.toInstant(), ChronoUnit.MILLIS);
+                    TimeUnit.MILLISECONDS.sleep(delay);
+                    return mockFuture; 
+                });
+        return mockFuture;
+    }
 }

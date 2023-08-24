@@ -76,7 +76,7 @@ sourceSets {
 test {
     useJUnitPlatform()
     reports {
-        junitXml.enabled = true
+        junitXml.required = true
     }
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
@@ -84,7 +84,7 @@ test {
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
-        csv.enabled true
+        csv.required = true
         csv.destination file("${buildDir}/jacocoCsv")
     }
     afterEvaluate {
