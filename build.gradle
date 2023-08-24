@@ -56,6 +56,7 @@ dependencies {
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.1'
 
     compileOnly fileTree(dir: "$runtimeLibs")
+    compileOnlyApi "javax.websocket:javax.websocket-api:1.0"
     // set for example MX_VERSION=8.12.0.2541 in gradle.properties
     prepareDependencies "runtime:mxbuild:${MX_VERSION}@tar.gz"
 }

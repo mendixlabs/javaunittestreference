@@ -277,8 +277,7 @@ public abstract class MendixUnitTestBase {
 
     @BeforeAll
     protected static void initializeCoreWithMockICore() {
-        // Note: for mendix 9.19 and higher, add another `null` parameter.
-        Core.initialize(ICORE, null, null, null, null, null);
+        Core.initialize(ICORE, null, null, null, null, null, null);
     }
 
     protected static String readTestResource(String resourceName) throws IOException {
