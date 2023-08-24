@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="javasource"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/com.mendix.json.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/com.mendix.logging-api.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/com.mendix.m2ee-api.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/com.mendix.public-api.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/javax.servlet-api.servlet.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.12.0.41679/runtime/bundles/javax.websocket-api.websocket.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/com.mendix.json.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/com.mendix.logging-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/com.mendix.m2ee-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/com.mendix.public-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/javax.servlet.servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/javax.websocket.websocket-api.jar"/>
 	<classpathentry kind="output" path="deployment/run/bin"/>
 </classpath>
