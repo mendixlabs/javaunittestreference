@@ -33,11 +33,13 @@ import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.apache.commons.lang3.StringUtils;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
@@ -116,6 +118,8 @@ public abstract class MendixUnitTestBase {
     /**
      * Use this convenience method to mock an IMendixObject that will return its
      * type when getType() is invoked on it.
+     * It will also correctly work with hasMember(String memberName) based on the member names in 
+     * its corresponding proxy class.
      *
      * @param objectType the object type to return (e.g.
      * system.proxies.User.entityName)
@@ -125,6 +129,31 @@ public abstract class MendixUnitTestBase {
         var mockIMO = mock(IMendixObject.class);
         lenient().when(mockIMO.getType())
                 .thenReturn(objectType);
+        try {
+            final var proxyName = String.format("%s.proxies.%s", 
+                    StringUtils.substringBefore(objectType, ".").toLowerCase(),
+                    StringUtils.substringAfter(objectType, ".")
+            );
+            final var memberNamesProxy = proxyName + "$MemberNames"; // The MemberNames nested enum of the proxy class as String
+            final var proxyNameClass = Class.forName(proxyName);
+            final var memberNamesProxyClass = Class.forName(memberNamesProxy);
+            final var nestMembers = proxyNameClass.getNestMembers();
+            final var memberNames = nestMembers[1]; // MemberNames is always generated as second element
+            final var memberNamesEnum = Class.forName(memberNames.getName());
+            final var enumConstants = memberNamesEnum.getEnumConstants(); 
+            
+            // This adds behavior so that when hasMember("foo") is called on a mock IMendixObject
+            // it will correctly return true or false based on the member names in its corresponding proxy class
+            lenient().when(mockIMO.hasMember(anyString()))
+                    .thenAnswer(imo -> Arrays.asList(enumConstants).stream()
+                                .anyMatch(ec -> {
+                                    var memberName = memberNamesProxyClass.cast(ec);
+                                    return memberName.toString().equals(imo.getArgument(0, String.class));
+                                })
+                    );
+        } catch (ClassNotFoundException e) {
+            fail(String.format("No proxy class of type %s exists", objectType), e);
+        }
         return mockIMO;
     }
 
